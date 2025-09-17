@@ -1,17 +1,16 @@
 .dashboard-container {
   display: flex;
-  padding: 2rem;
+  padding: 1rem;
 }
 
 /* Products Component Styling */
 .products-container {
-  margin: 2rem 0;
+  margin: 1rem 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  gap: 1rem;
   justify-content: center !important;
   align-items: center;
-  padding: 1rem;
   flex: 1;
 }
 

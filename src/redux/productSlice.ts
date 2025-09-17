@@ -7,6 +7,9 @@ const initialState: ProductState = {
   products: [],
   loading: false,
   error: null,
+  total: 0,
+  skip: 0,
+  limit: 5,
 };
 
 const productSlice = createSlice({
@@ -21,7 +24,10 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = action.payload;
+        state.products = action.payload.products;
+        state.total = action.payload.total;
+        state.skip = action.payload.skip;
+        state.limit = action.payload.limit;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;

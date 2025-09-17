@@ -39,4 +39,7 @@ export interface ProductState {
   products: ProductType[];
   loading: boolean;
   error: string | null;
+  total: number;
+  skip: number;
+  limit: number;
 }
