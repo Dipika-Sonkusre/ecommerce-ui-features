@@ -11,11 +11,28 @@ import {
 } from "@mui/material";
 import { useState, type ChangeEvent } from "react";
 
+const categories = [
+  {
+    id: "beauty",
+    label: "Beauty",
+  },
+  {
+    id: "fragrances",
+    label: "Fragrances",
+  },
+  {
+    id: "furniture",
+    label: "Furniture",
+  },
+  {
+    id: "groceries",
+    label: "Groceries",
+  },
+];
+
 export default function Sidebar() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 1000]);
-  const [selectedSize, setSelectedSize] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string[]>([]);
-  const [selectedGender, setSelectedGender] = useState<string[]>([]);
   const [rating, setRating] = useState<[number, number]>([0, 5]);
 
   const handlePriceChange = (event: Event, newValue: number | number[]) => {
@@ -30,27 +47,9 @@ export default function Sidebar() {
     }
   };
 
-  const handleSizeChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setSelectedSize((prev) =>
-      prev.includes(value)
-        ? prev.filter((item) => item !== value)
-        : [...prev, value]
-    );
-  };
-
   const handleCategoryChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     setSelectedCategory((prev) =>
-      prev.includes(value)
-        ? prev.filter((item) => item !== value)
-        : [...prev, value]
-    );
-  };
-
-  const handleGenderChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.target;
-    setSelectedGender((prev) =>
       prev.includes(value)
         ? prev.filter((item) => item !== value)
         : [...prev, value]
@@ -91,62 +90,20 @@ export default function Sidebar() {
 
         <Divider sx={{ my: 2 }} />
 
-        {/* Size Filter */}
-        <Typography variant="body1">Size</Typography>
-        <List>
-          {["S", "M", "L", "XL", "XXL"].map((size) => (
-            <ListItem key={size}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={selectedSize.includes(size)}
-                    onChange={handleSizeChange}
-                    value={size}
-                  />
-                }
-                label={size}
-              />
-            </ListItem>
-          ))}
-        </List>
-
-        <Divider sx={{ my: 1 }} />
-
         {/* Category Filter */}
         <Typography variant="body1">Category</Typography>
         <List>
-          {["Men", "Women", "Kids"].map((category) => (
-            <ListItem key={category}>
+          {categories.map((category) => (
+            <ListItem key={category.id}>
               <FormControlLabel
                 control={
                   <Checkbox
-                    checked={selectedCategory.includes(category)}
+                    checked={selectedCategory.includes(category.id)}
                     onChange={handleCategoryChange}
                     value={category}
                   />
                 }
-                label={category}
-              />
-            </ListItem>
-          ))}
-        </List>
-
-        <Divider sx={{ my: 1 }} />
-
-        {/* Gender Filter */}
-        <Typography variant="body1">Gender</Typography>
-        <List>
-          {["Male", "Female", "Unisex"].map((gender) => (
-            <ListItem key={gender}>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={selectedGender.includes(gender)}
-                    onChange={handleGenderChange}
-                    value={gender}
-                  />
-                }
-                label={gender}
+                label={category.label}
               />
             </ListItem>
           ))}

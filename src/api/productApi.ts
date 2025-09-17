@@ -36,7 +36,7 @@ export const apiRequestHandler = async ({
     }
 
     const response = await axios(config);
-    return response.data.products;
+    return response.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
       // Network error: no response received

@@ -8,6 +8,7 @@ import {
   CircularProgress,
   Container,
   Rating,
+  TablePagination,
   Typography,
 } from "@mui/material";
 import type { ProductType } from "../interface";
@@ -17,11 +18,28 @@ import { useEffect } from "react";
 
 export default function Product() {
   const dispatch = useAppDispatch();
-  const { products, loading, error } = useAppSelector((state) => state.product);
+  const { products, total, skip, limit, loading, error } = useAppSelector(
+    (state) => state.product
+  );
 
   useEffect(() => {
-    dispatch(fetchProducts());
-  }, [dispatch]);
+    dispatch(fetchProducts({ skip, limit }));
+  }, [dispatch, skip, limit]);
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    const newSkip = newPage * limit;
+    dispatch(fetchProducts({ skip: newSkip, limit: limit }));
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const newLimit = parseInt(event.target.value, 10);
+    dispatch(fetchProducts({ skip: 0, limit: newLimit }));
+  };
 
   return (
     <Container maxWidth="xl">
@@ -29,7 +47,7 @@ export default function Product() {
         variant="h3"
         color="initial"
         style={{
-          margin: "2rem 0",
+          margin: "1rem 0",
           fontWeight: "bold",
           fontSize: "2rem",
           lineHeight: "1.2",
@@ -135,6 +153,16 @@ export default function Product() {
           </Card>
         ))}
       </Box>
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25, 50]}
+        component="div"
+        count={total}
+        rowsPerPage={limit}
+        page={skip / limit}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
     </Container>
   );
 }
