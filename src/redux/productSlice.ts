@@ -14,6 +14,7 @@ const initialState: ProductState = {
   categoryLists: [],
   sortBy: "",
   order: "asc",
+  searchProduct: "",
 };
 
 const productSlice = createSlice({
@@ -35,6 +36,9 @@ const productSlice = createSlice({
     },
     setOrder: (state, action) => {
       state.order = action.payload;
+    },
+    setSearchProduct: (state, action) => {
+      state.searchProduct = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -72,6 +76,12 @@ const productSlice = createSlice({
   },
 });
 
-export const { setSelectedCategory, setLimit, setSkip, setSortBy, setOrder } =
-  productSlice.actions;
+export const {
+  setSelectedCategory,
+  setLimit,
+  setSkip,
+  setSortBy,
+  setOrder,
+  setSearchProduct,
+} = productSlice.actions;
 export const productReducer = productSlice.reducer;

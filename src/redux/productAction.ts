@@ -21,12 +21,14 @@ export const fetchProducts = createAsyncThunk(
     category,
     sortBy = "",
     order = "asc",
+    searchProduct = "",
   }: {
     skip: number;
     limit: number;
     category?: string;
     sortBy?: string;
     order?: "asc" | "desc";
+    searchProduct?: string;
   }) => {
     let url = `${API_URL}?limit=${limit}&skip=${skip}`;
 
@@ -36,6 +38,10 @@ export const fetchProducts = createAsyncThunk(
 
     if (sortBy && order) {
       url = `${API_URL}?sortBy=${sortBy}&order=${order}&limit=${limit}&skip=${skip}`;
+    }
+
+    if (searchProduct) {
+      url = `${API_URL}/search?q=${searchProduct}&limit=${limit}&skip=${skip}`;
     }
 
     const response = await apiRequestHandler({ url });

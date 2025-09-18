@@ -2,7 +2,13 @@ import { useEffect } from "react";
 
 import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { fetchProducts } from "../redux/productAction";
-import { setLimit, setOrder, setSkip, setSortBy } from "../redux/productSlice";
+import {
+  setLimit,
+  setOrder,
+  setSearchProduct,
+  setSkip,
+  setSortBy,
+} from "../redux/productSlice";
 import type { ProductType } from "../interface";
 
 import {
@@ -18,6 +24,7 @@ import {
   CircularProgress,
   Typography,
   TableSortLabel,
+  TextField,
 } from "@mui/material";
 
 const tableColumns = [
@@ -32,17 +39,28 @@ const tableColumns = [
 
 export default function ProductSorting() {
   const dispatch = useAppDispatch();
-  const { products, loading, error, skip, limit, total, sortBy, order } =
-    useAppSelector((state) => state.product);
+  const {
+    products,
+    loading,
+    error,
+    skip,
+    limit,
+    total,
+    sortBy,
+    order,
+    searchProduct,
+  } = useAppSelector((state) => state.product);
 
   // Fetch products
   useEffect(() => {
     if (sortBy && order) {
       dispatch(fetchProducts({ skip, limit, sortBy, order }));
+    } else if (searchProduct) {
+      dispatch(fetchProducts({ skip, limit, searchProduct }));
     } else {
       dispatch(fetchProducts({ skip, limit }));
     }
-  }, [dispatch, skip, limit, sortBy, order]);
+  }, [dispatch, skip, limit, sortBy, order, searchProduct]);
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -68,13 +86,30 @@ export default function ProductSorting() {
     dispatch(setOrder(isAsc ? "desc" : "asc"));
   };
 
+  const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target;
+    dispatch(setSearchProduct(value));
+  };
+
   const rowsPerPageOptions = Array.from(
     { length: Math.ceil(total / limit) },
     (_, i) => (i + 1) * limit
   );
 
   return (
-    <Paper sx={{ width: "100%", overflow: "hidden" }}>
+    <Paper sx={{ width: "100%", overflow: "hidden", p: 2 }}>
+      {/* Search box */}
+      <Box sx={{ mb: 2, mr: 5, display: "flex", justifyContent: "flex-end" }}>
+        <TextField
+          size="small"
+          variant="outlined"
+          placeholder="Search products…"
+          value={searchProduct}
+          onChange={handleSearch}
+          sx={{ width: 300 }}
+        />
+      </Box>
+
       <TableContainer sx={{ position: "relative", minHeight: 200 }}>
         {/* Loader centered over entire table area */}
         {loading && (
