@@ -1,3 +1,11 @@
+import { useEffect } from "react";
+
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { fetchProducts } from "../redux/productAction";
+import { setLimit, setSkip } from "../redux/productSlice";
+
+import type { ProductType } from "../interface";
+
 import {
   Box,
   Button,
@@ -11,35 +19,41 @@ import {
   TablePagination,
   Typography,
 } from "@mui/material";
-import type { ProductType } from "../interface";
-import { useAppDispatch, useAppSelector } from "../redux/hooks";
-import { fetchProducts } from "../redux/productAction";
-import { useEffect } from "react";
 
 export default function Product() {
   const dispatch = useAppDispatch();
-  const { products, total, skip, limit, loading, error } = useAppSelector(
-    (state) => state.product
-  );
+  const { products, loading, error, skip, limit, selectedCategory, total } =
+    useAppSelector((state) => state.product);
 
+  // Fetch products
   useEffect(() => {
-    dispatch(fetchProducts({ skip, limit }));
-  }, [dispatch, skip, limit]);
+    if (selectedCategory) {
+      dispatch(fetchProducts({ skip, limit, category: selectedCategory }));
+    } else {
+      dispatch(fetchProducts({ skip, limit }));
+    }
+  }, [dispatch, skip, limit, selectedCategory]);
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
     newPage: number
   ) => {
     const newSkip = newPage * limit;
-    dispatch(fetchProducts({ skip: newSkip, limit: limit }));
+    dispatch(setSkip(newSkip));
   };
 
   const handleChangeRowsPerPage = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const newLimit = parseInt(event.target.value, 10);
-    dispatch(fetchProducts({ skip: 0, limit: newLimit }));
+    dispatch(setLimit(newLimit));
+    dispatch(setSkip(0));
   };
+
+  const rowsPerPageOptions = Array.from(
+    { length: Math.ceil(total / limit) },
+    (_, i) => (i + 1) * limit
+  );
 
   return (
     <Container maxWidth="xl">
@@ -85,7 +99,6 @@ export default function Product() {
             sx={{ maxWidth: 360, borderRadius: 3, boxShadow: 3 }}
             key={product.id}
           >
-            {/* Product Image */}
             <CardMedia
               component="img"
               height="180"
@@ -155,11 +168,11 @@ export default function Product() {
       </Box>
 
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25, 50]}
+        rowsPerPageOptions={rowsPerPageOptions}
         component="div"
         count={total}
         rowsPerPage={limit}
-        page={skip / limit}
+        page={Math.floor(skip / limit)}
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />

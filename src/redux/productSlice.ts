@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { fetchProducts } from "./productAction";
+import { fetchCategoryLists, fetchProducts } from "./productAction";
 import { showToast } from "../utils/toastHandler";
 import type { ProductState } from "../interface";
 
@@ -9,13 +9,34 @@ const initialState: ProductState = {
   error: null,
   total: 0,
   skip: 0,
-  limit: 5,
+  limit: 15,
+  selectedCategory: "",
+  categoryLists: [],
+  sortBy: "",
+  order: "asc",
 };
 
 const productSlice = createSlice({
   name: "product",
   initialState,
-  reducers: {},
+  reducers: {
+    setSkip: (state, action) => {
+      state.skip = action.payload;
+    },
+    setLimit: (state, action) => {
+      state.limit = action.payload;
+      state.skip = 0;
+    },
+    setSelectedCategory: (state, action) => {
+      state.selectedCategory = action.payload;
+    },
+    setSortBy: (state, action) => {
+      state.sortBy = action.payload;
+    },
+    setOrder: (state, action) => {
+      state.order = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchProducts.pending, (state) => {
@@ -24,17 +45,33 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = action.payload.products;
+        state.products = action.payload.data;
         state.total = action.payload.total;
-        state.skip = action.payload.skip;
-        state.limit = action.payload.limit;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || "Failed to fetch users";
-        showToast(action.error.message || "Failed to fetch users", "error");
+        state.error = action.error.message || "Failed to fetch products";
+        showToast(action.error.message || "Failed to fetch products", "error");
+      })
+      .addCase(fetchCategoryLists.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCategoryLists.fulfilled, (state, action) => {
+        state.loading = false;
+        state.categoryLists = action.payload;
+      })
+      .addCase(fetchCategoryLists.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || "Failed to fetch category lists";
+        showToast(
+          action.error.message || "Failed to fetch category lists",
+          "error"
+        );
       });
   },
 });
 
+export const { setSelectedCategory, setLimit, setSkip, setSortBy, setOrder } =
+  productSlice.actions;
 export const productReducer = productSlice.reducer;
