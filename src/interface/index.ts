@@ -46,4 +46,5 @@ export interface ProductState {
   categoryLists: string[];
   sortBy: string;
   order: "asc" | "desc";
+  searchProduct: string;
 }
