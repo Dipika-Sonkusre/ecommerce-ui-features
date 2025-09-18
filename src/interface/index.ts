@@ -42,4 +42,8 @@ export interface ProductState {
   total: number;
   skip: number;
   limit: number;
+  selectedCategory: string;
+  categoryLists: string[];
+  sortBy: string;
+  order: "asc" | "desc";
 }
