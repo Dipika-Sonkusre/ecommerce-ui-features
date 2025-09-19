@@ -48,3 +48,26 @@ export interface ProductState {
   order: "asc" | "desc";
   searchProduct: string;
 }
+
+export interface CartState {
+  cart: ProductType[];
+  totalAmount: number;
+  totalQuantity: number;
+}
+
+export interface LoginState {
+  error: string | null;
+  isLoading: boolean;
+}
+
+export interface LoginType {
+  id: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  image: string;
+  accessToken: string;
+  refreshToken: string;
+}

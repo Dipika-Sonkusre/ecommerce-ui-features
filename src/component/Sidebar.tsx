@@ -41,6 +41,9 @@ export default function Sidebar() {
           boxSizing: "border-box",
           overflowX: "hidden",
           padding: 2,
+          top: 73, // height of your AppBar
+          height: "calc(100% - 73px)",
+          margin: "0 10px",
         },
       }}
       variant="persistent"
