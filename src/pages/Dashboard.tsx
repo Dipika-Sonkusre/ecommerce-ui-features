@@ -1,5 +1,5 @@
-import Sidebar from "./Sidebar";
-import Product from "./Product";
+import Product from "../component/Product";
+import Sidebar from "../component/Sidebar";
 
 export default function Dashboard() {
   return (

@@ -1,5 +1,4 @@
 import axios, { type AxiosRequestConfig } from "axios";
-import type { ProductType } from "../interface";
 import { showToast } from "../utils/toastHandler";
 
 export type HttpMethod = "get" | "post" | "put" | "delete" | "patch";
@@ -7,7 +6,7 @@ export type HttpMethod = "get" | "post" | "put" | "delete" | "patch";
 interface ApiRequestOptions {
   url: string;
   method?: HttpMethod;
-  data?: ProductType | "";
+  data?: Record<string, unknown>;
   headers?: Record<string, string>;
 }
 
@@ -21,7 +20,7 @@ const errorMessages: Record<number, string> = {
 export const apiRequestHandler = async ({
   url,
   method = "get",
-  data = "",
+  data = {},
   headers = {},
 }: ApiRequestOptions) => {
   try {
@@ -31,7 +30,11 @@ export const apiRequestHandler = async ({
       headers,
     };
 
-    if (method !== "get" && data !== undefined && data !== "") {
+    if (
+      method !== "get" &&
+      data !== undefined &&
+      Object.keys(data as object).length > 0
+    ) {
       config.data = data;
     }
 

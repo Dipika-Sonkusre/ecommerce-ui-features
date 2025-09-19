@@ -19,6 +19,7 @@ import {
   TablePagination,
   Typography,
 } from "@mui/material";
+import { addToCart } from "../redux/cartSlice";
 
 export default function Product() {
   const dispatch = useAppDispatch();
@@ -54,6 +55,12 @@ export default function Product() {
     { length: Math.ceil(total / limit) },
     (_, i) => (i + 1) * limit
   );
+
+  const onAddToCart = (product: ProductType) => {
+    if (product) {
+      dispatch(addToCart(product));
+    }
+  };
 
   return (
     <Container maxWidth="xl">
@@ -159,7 +166,13 @@ export default function Product() {
 
             {/* Actions */}
             <CardActions>
-              <Button fullWidth variant="contained" color="primary">
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                disabled={product.stock <= 0}
+                onClick={() => onAddToCart(product)}
+              >
                 Add to Cart
               </Button>
             </CardActions>
