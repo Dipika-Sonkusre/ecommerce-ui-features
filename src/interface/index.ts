@@ -56,8 +56,10 @@ export interface CartState {
 }
 
 export interface LoginState {
+  userProfile: GetCurrentUserType | null;
   error: string | null;
   isLoading: boolean;
+  loggedIn: boolean;
 }
 
 export interface LoginType {
@@ -70,4 +72,20 @@ export interface LoginType {
   image: string;
   accessToken: string;
   refreshToken: string;
+}
+
+export interface GetCurrentUserType {
+  id: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  gender: string;
+  image: string;
+  age: number;
+  birthDate: string | number;
+  phone: string;
+  bloodGroup: string;
+  height: number;
+  weight: number;
 }

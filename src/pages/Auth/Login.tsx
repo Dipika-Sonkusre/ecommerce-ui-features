@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useAppDispatch } from "../../redux/hooks";
-import { userLogin } from "../../redux/authSlice";
+import { setUserLoggedIn, userLogin } from "../../redux/authSlice";
 import { useNavigate } from "react-router";
 import { ApiEndpoint } from "../../enum";
 import { showToast } from "../../utils/toastHandler";
@@ -31,6 +31,7 @@ export default function Login() {
       return;
     }
     dispatch(userLogin({ username, password }));
+    dispatch(setUserLoggedIn(true));
     navigate(ApiEndpoint.HOME);
     setRemember(false);
     setPassword("");

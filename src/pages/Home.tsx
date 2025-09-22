@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AppBar,
   Avatar,
@@ -12,12 +12,16 @@ import {
 } from "@mui/material";
 import { Outlet, useNavigate } from "react-router";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { useAppSelector } from "../redux/hooks";
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
 import { showToast } from "../utils/toastHandler";
 import { ApiEndpoint } from "../enum";
+import { clearAuthToken } from "../utils/clearAuthToken";
+import { setUserLoggedIn } from "../redux/authSlice";
 
 export default function Home() {
   const { totalQuantity } = useAppSelector((state) => state.cart);
+  const isLoggedIn = useAppSelector((state) => state.login.loggedIn);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const handleCartClick = () => {
@@ -30,8 +34,6 @@ export default function Home() {
       );
     }
   };
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -46,18 +48,24 @@ export default function Home() {
   };
 
   const handleLogout = () => {
-    const accessToken = localStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
-
-    if (accessToken && refreshToken) {
-      // Logout logic
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      setIsLoggedIn(false);
-      handleMenuClose();
-      showToast("You have logged out successfully.", "success");
-    }
+    // Logout logic
+    clearAuthToken();
+    dispatch(setUserLoggedIn(false));
+    handleMenuClose();
+    showToast("You have logged out successfully.", "success");
   };
+
+  const handleViewProfile = () => {
+    navigate(ApiEndpoint.USER_PROFILE);
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem("accessToken")) {
+      dispatch(setUserLoggedIn(true));
+    } else {
+      dispatch(setUserLoggedIn(false));
+    }
+  }, [dispatch]);
 
   return (
     <>
@@ -68,7 +76,7 @@ export default function Home() {
             MyLogo
           </Typography>
 
-          <Box>
+          <Box sx={{ display: "flex", gap: "10px" }}>
             <IconButton
               sx={{ position: "relative", cursor: "pointer" }}
               onClick={handleCartClick}
@@ -101,7 +109,7 @@ export default function Home() {
                   anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                   transformOrigin={{ vertical: "top", horizontal: "right" }}
                 >
-                  <MenuItem>View Profile</MenuItem>
+                  <MenuItem onClick={handleViewProfile}>View Profile</MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
               </Box>
