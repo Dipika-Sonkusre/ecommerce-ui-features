@@ -10,3 +10,13 @@ export async function authLoader() {
   }
   return null;
 }
+
+export async function loginLoader() {
+  const accessToken = localStorage.getItem("accessToken");
+  const refreshToken = localStorage.getItem("refreshToken");
+
+  if (accessToken && refreshToken) {
+    throw redirect(ApiEndpoint.HOME);
+  }
+  return null;
+}

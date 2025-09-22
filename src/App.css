@@ -66,3 +66,9 @@
 #checkout-button {
   background-color: #007aff !important;
 }
+
+
+.css-rizt0-MuiTypography-root {
+  font-size: 0.9rem !important;
+  text-transform: capitalize;
+}

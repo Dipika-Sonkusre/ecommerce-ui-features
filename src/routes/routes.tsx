@@ -4,9 +4,10 @@ import ProtectedLayout from "../pages/ProtectedLayout";
 import Cart from "../pages/Cart";
 import Login from "../pages/Auth/Login";
 import ProductSorting from "../pages/ProductSorting";
+import UserProfile from "../pages/UserProfile";
 
 import { ApiEndpoint } from "../enum";
-import { authLoader } from "../utils/loaders";
+import { authLoader, loginLoader } from "../utils/loaders";
 
 import { createBrowserRouter } from "react-router";
 
@@ -34,7 +35,14 @@ export const router = createBrowserRouter([
       {
         path: ApiEndpoint.AUTH_LOGIN,
         Component: Login,
+        loader: loginLoader,
         errorElement: <div>Something went wrong!</div>,
+      },
+      {
+        path: ApiEndpoint.USER_PROFILE,
+        Component: UserProfile,
+        errorElement: <div>Something went wrong!</div>,
+        loader: authLoader,
       },
       {
         path: ApiEndpoint.PRODUCT_SORTING,
