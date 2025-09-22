@@ -1,0 +1,194 @@
+import { useEffect } from "react";
+
+import { useAppDispatch, useAppSelector } from "../redux/hooks";
+import { fetchProducts } from "../redux/productAction";
+import { setLimit, setSkip } from "../redux/productSlice";
+
+import type { ProductType } from "../interface";
+
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardMedia,
+  CircularProgress,
+  Container,
+  Rating,
+  TablePagination,
+  Typography,
+} from "@mui/material";
+import { addToCart } from "../redux/cartSlice";
+
+export default function Product() {
+  const dispatch = useAppDispatch();
+  const { products, loading, error, skip, limit, selectedCategory, total } =
+    useAppSelector((state) => state.product);
+
+  // Fetch products
+  useEffect(() => {
+    if (selectedCategory) {
+      dispatch(fetchProducts({ skip, limit, category: selectedCategory }));
+    } else {
+      dispatch(fetchProducts({ skip, limit }));
+    }
+  }, [dispatch, skip, limit, selectedCategory]);
+
+  const handleChangePage = (
+    event: React.MouseEvent<HTMLButtonElement> | null,
+    newPage: number
+  ) => {
+    const newSkip = newPage * limit;
+    dispatch(setSkip(newSkip));
+  };
+
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const newLimit = parseInt(event.target.value, 10);
+    dispatch(setLimit(newLimit));
+    dispatch(setSkip(0));
+  };
+
+  const rowsPerPageOptions = Array.from(
+    { length: Math.ceil(total / limit) },
+    (_, i) => (i + 1) * limit
+  );
+
+  const onAddToCart = (product: ProductType) => {
+    if (product) {
+      dispatch(addToCart(product));
+    }
+  };
+
+  return (
+    <Container maxWidth="xl">
+      <Typography
+        variant="h3"
+        color="initial"
+        style={{
+          margin: "1rem 0",
+          fontWeight: "bold",
+          fontSize: "2rem",
+          lineHeight: "1.2",
+        }}
+      >
+        Products
+      </Typography>
+      {loading && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
+
+      {error && (
+        <Typography variant="body1" color="error" gutterBottom>
+          {error}
+        </Typography>
+      )}
+
+      {products?.length === 0 && (
+        <Typography variant="body1" gutterBottom sx={{ textAlign: "center" }}>
+          No products found.
+        </Typography>
+      )}
+
+      <Box className="products-container">
+        {products?.map((product: ProductType) => (
+          <Card
+            sx={{ maxWidth: 360, borderRadius: 3, boxShadow: 3 }}
+            key={product.id}
+          >
+            <CardMedia
+              component="img"
+              height="180"
+              image={product.thumbnail}
+              alt={product.title}
+            />
+
+            {/* Product Content */}
+            <CardContent sx={{ textAlign: "center" }}>
+              <Typography variant="h6" fontWeight="bold" gutterBottom noWrap>
+                {product.title}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" noWrap>
+                {product.brand} • {product.category}
+              </Typography>
+              <Box display="flex" alignItems="center" mt={1} mb={1}>
+                <Rating
+                  value={product.rating}
+                  precision={0.5}
+                  readOnly
+                  size="small"
+                />
+                <Typography variant="caption" ml={1}>
+                  {product.rating.toFixed(1)}
+                </Typography>
+              </Box>
+
+              {/* Price Section */}
+              <Box display="flex" alignItems="center" gap={1} mb={1}>
+                <Typography variant="h6" fontWeight="bold" color="primary">
+                  ${product.price.toFixed(2)}
+                </Typography>
+              </Box>
+
+              {/* Stock Info */}
+              <Typography
+                variant="body2"
+                color={product.stock > 0 ? "success.main" : "error.main"}
+                gutterBottom
+              >
+                {product.availabilityStatus}
+              </Typography>
+
+              {/* Short Description */}
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 2,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
+                {product.description}
+              </Typography>
+            </CardContent>
+
+            {/* Actions */}
+            <CardActions>
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                disabled={product.stock <= 0}
+                onClick={() => onAddToCart(product)}
+              >
+                Add to Cart
+              </Button>
+            </CardActions>
+          </Card>
+        ))}
+      </Box>
+
+      <TablePagination
+        rowsPerPageOptions={rowsPerPageOptions}
+        component="div"
+        count={total}
+        rowsPerPage={limit}
+        page={Math.floor(skip / limit)}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+      />
+    </Container>
+  );
+}
