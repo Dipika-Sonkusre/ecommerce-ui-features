@@ -4,8 +4,11 @@ import {
   type PayloadAction,
 } from "@reduxjs/toolkit";
 import { apiRequestHandler } from "../api/productApi";
-import type { GetCurrentUserType, LoginState } from "../interface";
+import type { GetCurrentUserType } from "../interface";
 import { showToast } from "../utils/toastHandler";
+import { authInitialState } from "../utils/constants";
+
+const AUTH_URL = "https://dummyjson.com/auth";
 
 export const userLogin = createAsyncThunk<
   // Returned payload type
@@ -14,7 +17,7 @@ export const userLogin = createAsyncThunk<
   { username: string; password: string }
 >("login", async ({ username, password }) => {
   const response = await apiRequestHandler({
-    url: "https://dummyjson.com/auth/login",
+    url: `${AUTH_URL}/login`,
     method: "post",
     data: { username, password, expiresInMins: 30 },
   });
@@ -30,7 +33,7 @@ export const getCurrentUser = createAsyncThunk<
   { accessToken: string }
 >("currentUser", async () => {
   const response = await apiRequestHandler({
-    url: "https://dummyjson.com/auth/me",
+    url: `${AUTH_URL}/me`,
     method: "get",
     headers: {
       Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
@@ -39,15 +42,9 @@ export const getCurrentUser = createAsyncThunk<
   return response;
 });
 
-const initialState: LoginState = {
-  userProfile: null,
-  error: null,
-  isLoading: false,
-  loggedIn: false,
-};
 export const loginSlice = createSlice({
   name: "login",
-  initialState,
+  initialState: authInitialState,
   reducers: {
     setUserLoggedIn: (state, action: PayloadAction<boolean>) => {
       state.userProfile = null;

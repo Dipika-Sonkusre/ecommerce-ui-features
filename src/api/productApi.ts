@@ -1,21 +1,40 @@
 import axios, { type AxiosRequestConfig } from "axios";
 import { showToast } from "../utils/toastHandler";
+import type { ApiRequestOptions } from "../interface";
+import { errorMessages } from "../utils/constants";
 
-export type HttpMethod = "get" | "post" | "put" | "delete" | "patch";
+// Axios response interceptor for handling token refresh
+axios.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response?.status === 401) {
+      const refreshToken = localStorage.getItem("refreshToken");
+      if (refreshToken) {
+        try {
+          const refreshResponse = await axios.post(
+            "https://dummyjson.com/auth/refresh",
+            {
+              refreshToken,
+            }
+          );
+          const newAccessToken = refreshResponse.data.accessToken;
+          const newRefreshToken = refreshResponse.data.refreshToken;
+          localStorage.setItem("accessToken", newAccessToken);
+          localStorage.setItem("refreshToken", newRefreshToken);
 
-interface ApiRequestOptions {
-  url: string;
-  method?: HttpMethod;
-  data?: Record<string, unknown>;
-  headers?: Record<string, string>;
-}
-
-const errorMessages: Record<number, string> = {
-  401: "Unauthorized. Please log in again.",
-  403: "Forbidden. You do not have permission.",
-  404: "Requested resource not found.",
-  500: "Server is currently unavailable. Please try later.",
-};
+          error.config.headers.Authorization = `Bearer ${newAccessToken}`;
+          return axios(error.config);
+        } catch {
+          // Refresh failed, clear tokens
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          showToast("Session expired. Please log in again.", "error");
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const apiRequestHandler = async ({
   url,
