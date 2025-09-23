@@ -1,6 +1,5 @@
 import { toast } from "react-toastify";
-
-type ToastType = "success" | "error" | "info" | "warn";
+import type { ToastType } from "../type";
 
 export const showToast = (message: string, type: ToastType = "info") => {
   switch (type) {

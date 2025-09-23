@@ -1,3 +1,5 @@
+import type { HttpMethod } from "../type";
+
 export interface ProductType {
   id: number;
   title: string;
@@ -88,4 +90,11 @@ export interface GetCurrentUserType {
   bloodGroup: string;
   height: number;
   weight: number;
+}
+
+export interface ApiRequestOptions {
+  url: string;
+  method?: HttpMethod;
+  data?: Record<string, unknown>;
+  headers?: Record<string, string>;
 }

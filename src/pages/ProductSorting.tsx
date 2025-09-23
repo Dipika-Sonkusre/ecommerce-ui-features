@@ -26,16 +26,7 @@ import {
   TableSortLabel,
   TextField,
 } from "@mui/material";
-
-const tableColumns = [
-  "id",
-  "title",
-  "brand",
-  "category",
-  "price",
-  "rating",
-  "stock",
-];
+import { tableColumns } from "../utils/constants";
 
 export default function ProductSorting() {
   const dispatch = useAppDispatch();

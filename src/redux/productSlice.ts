@@ -1,25 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { fetchCategoryLists, fetchProducts } from "./productAction";
 import { showToast } from "../utils/toastHandler";
-import type { ProductState } from "../interface";
-
-const initialState: ProductState = {
-  products: [],
-  loading: false,
-  error: null,
-  total: 0,
-  skip: 0,
-  limit: 15,
-  selectedCategory: "",
-  categoryLists: [],
-  sortBy: "",
-  order: "asc",
-  searchProduct: "",
-};
+import { productInitialState } from "../utils/constants";
 
 const productSlice = createSlice({
   name: "product",
-  initialState,
+  initialState: productInitialState,
   reducers: {
     setSkip: (state, action) => {
       state.skip = action.payload;

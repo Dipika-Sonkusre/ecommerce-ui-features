@@ -1,16 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { toast } from "react-toastify";
-import type { CartState, ProductType } from "../interface";
-
-const initialState: CartState = {
-  cart: [],
-  totalAmount: 0,
-  totalQuantity: 0,
-};
+import type { ProductType } from "../interface";
+import { cartInitialState } from "../utils/constants";
 
 const cartSlice = createSlice({
   name: "cart",
-  initialState,
+  initialState: cartInitialState,
   reducers: {
     addToCart: (state, action) => {
       const product: ProductType = action.payload;
